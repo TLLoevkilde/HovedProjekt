@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResourceApi", "ResourceApi\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientConsole", "ClientConsole\ClientConsole.csproj", "{A8808A4D-5A76-4F55-9DBE-CAD133A68E4F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthServer", "AuthServer\AuthServer.csproj", "{3FB93491-EBDF-42D7-A4A4-E6B44B3CE5EA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{A8808A4D-5A76-4F55-9DBE-CAD133A68E4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A8808A4D-5A76-4F55-9DBE-CAD133A68E4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A8808A4D-5A76-4F55-9DBE-CAD133A68E4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3FB93491-EBDF-42D7-A4A4-E6B44B3CE5EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3FB93491-EBDF-42D7-A4A4-E6B44B3CE5EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3FB93491-EBDF-42D7-A4A4-E6B44B3CE5EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3FB93491-EBDF-42D7-A4A4-E6B44B3CE5EA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
