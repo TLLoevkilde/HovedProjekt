@@ -1,4 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ResourceApi.Data;
+using ResourceApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ResourceApi.Controllers
 {
@@ -6,18 +9,34 @@ namespace ResourceApi.Controllers
     [Route("api/[controller]")]
     public class NoteController : ControllerBase
     {
-        private static readonly List<string> Notes = new();
+        private readonly NotesDbContext _db;
+
+        public NoteController(NotesDbContext db)
+        {
+            _db = db;
+        }
 
         [HttpGet]
-        public IActionResult Get() => Ok(Notes);
+        public async Task<IActionResult> Get()
+        {
+            var notes = await _db.Notes
+                .OrderByDescending(n => n.Id)
+                .Select(n => n.Text)
+                .ToListAsync();
+
+            return Ok(notes);
+        }
 
         [HttpPost]
-        public IActionResult Post([FromBody] string note)
+        public async Task<IActionResult> Post([FromBody] string noteText)
         {
-            if (string.IsNullOrWhiteSpace(note))
+            if (string.IsNullOrWhiteSpace(noteText))
                 return BadRequest("Note må ikke være tom.");
 
-            Notes.Add(note);
+            var note = new Note { Text = noteText };
+            _db.Notes.Add(note);
+            await _db.SaveChangesAsync();
+
             return Ok();
         }
     }
