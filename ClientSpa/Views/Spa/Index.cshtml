@@ -1,0 +1,46 @@
+﻿@{
+    ViewData["Title"] = "Simple SPA";
+}
+
+<h2>Mine noter</h2>
+
+<input type="text" id="noteInput" placeholder="Skriv en note..." />
+<button onclick="addNote()">Tilføj</button>
+
+<ul id="noteList"></ul>
+
+<script>
+    const apiUrl = "https://localhost:7126/api/note"; // ResourceAPI-url
+
+    async function loadNotes() {
+        const res = await fetch(apiUrl);
+        const notes = await res.json();
+
+        const list = document.getElementById("noteList");
+        list.innerHTML = "";
+
+        notes.forEach(note => {
+            const li = document.createElement("li");
+            li.innerText = note;
+            list.appendChild(li);
+        });
+    }
+
+    async function addNote() {
+        const input = document.getElementById("noteInput");
+        const note = input.value.trim();
+
+        if (!note) return;
+
+        await fetch(apiUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(note)
+        });
+
+        input.value = "";
+        loadNotes();
+    }
+
+    loadNotes();
+</script>
