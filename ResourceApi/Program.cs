@@ -12,7 +12,7 @@ builder.Services.AddDbContext<NotesDbContext>(options =>
 builder.Services.AddOpenIddict()
     .AddValidation(options =>
     {
-        // URL'en til din AuthServer
+        // URL'en til AuthServer
         options.SetIssuer("https://localhost:7143/");
 
         // Delte krypteringsnøgle
@@ -22,8 +22,9 @@ builder.Services.AddOpenIddict()
         // Brug HttpClient til discovery
         options.UseSystemNetHttp();
 
-        // Registrér ASP.NET Core-integration
-        options.UseAspNetCore();
+        // ResourceAPI repræsenterer denne resource (audience)
+        options.AddAudiences("resource_server");
+
     });
 
 // Hvis du vil bruge [Authorize] attributten globalt (valgfrit)

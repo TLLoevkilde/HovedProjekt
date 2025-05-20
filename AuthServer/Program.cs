@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using AuthServer.Data;
 using Microsoft.IdentityModel.Tokens;
+using OpenIddict.Abstractions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,14 +22,34 @@ builder.Services.AddOpenIddict()
     })
     .AddServer(options =>
     {
-        options.SetTokenEndpointUris("connect/token");
+        options.SetAuthorizationEndpointUris("/connect/authorize")
+               .SetTokenEndpointUris("/connect/token");
+
+        options.AllowAuthorizationCodeFlow()
+               .RequireProofKeyForCodeExchange();
+
         options.AllowClientCredentialsFlow();
+
+        options.RegisterScopes(OpenIddictConstants.Scopes.OpenId,
+                               OpenIddictConstants.Scopes.Profile,
+                               OpenIddictConstants.Scopes.Email);
+
         options.AddEncryptionKey(new SymmetricSecurityKey(
             Convert.FromBase64String("DRjd/GnduI3Efzen9V9BvbNUfc/VKgXltV7Kbk9sMkY=")));
         options.AddDevelopmentSigningCertificate();
+
         options.UseAspNetCore()
-               .EnableTokenEndpointPassthrough();
+               .EnableAuthorizationEndpointPassthrough()
+               .EnableTokenEndpointPassthrough()
+               .EnableStatusCodePagesIntegration()
+               .EnableAuthorizationRequestCaching();
     });
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login";
+});
+
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -36,7 +57,22 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
 builder.Services.AddHostedService<DbSeeder>();
+
+
+var allowedOrigins = "allowedOrigins";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: allowedOrigins,
+        policy =>
+        {
+            policy.WithOrigins("https://localhost:7296")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
 
 var app = builder.Build();
 
@@ -54,7 +90,7 @@ else
 app.UseForwardedHeaders();
 app.UseHttpsRedirection();
 app.UseRouting();
-app.UseCors();
+app.UseCors(allowedOrigins);
 app.UseAuthentication();
 app.UseAuthorization();
 
