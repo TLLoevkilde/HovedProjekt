@@ -25,19 +25,25 @@ builder.Services.AddOpenIddict()
         // ResourceAPI repræsenterer denne resource (audience)
         options.AddAudiences("resource_server");
 
+        // Register the ASP.NET Core host.
+        options.UseAspNetCore();
+
     });
 
 // Hvis du vil bruge [Authorize] attributten globalt (valgfrit)
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme;
 });
 
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
     });
 });
 
@@ -49,8 +55,24 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 app.UseCors();
+// (valgfri) Log Authorization-header
+app.Use(async (context, next) =>
+{
+    Console.WriteLine($"Authorization: {context.Request.Headers["Authorization"]}");
+    await next();
+});
 
 app.UseAuthentication();
+app.Use(async (context, next) =>
+{
+    Console.WriteLine($"IsAuthenticated: {context.User.Identity?.IsAuthenticated}");
+    foreach (var claim in context.User.Claims)
+    {
+        Console.WriteLine($"  {claim.Type}: {claim.Value}");
+    }
+    await next();
+});
+
 app.UseAuthorization();
 
 app.MapControllers();

@@ -52,6 +52,9 @@ namespace AuthServer.Controllers
             {
                 var principal = (await HttpContext.AuthenticateAsync(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme)).Principal
                     ?? throw new InvalidOperationException("Brugerens principal kunne ikke hentes.");
+                principal.SetResources("resource_server");
+                //principal.SetScopes(request.GetScopes());
+
 
                 return SignIn(principal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
             }

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using AuthServer.Data;
 using Microsoft.IdentityModel.Tokens;
 using OpenIddict.Abstractions;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -65,14 +66,25 @@ var allowedOrigins = "allowedOrigins";
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: allowedOrigins,
-        policy =>
-        {
-            policy.WithOrigins("https://localhost:7296")
-                  .AllowAnyHeader()
-                  .AllowAnyMethod();
-        });
+    //options.AddPolicy(name: allowedOrigins,
+    //    policy =>
+    //    {
+    //        policy.WithOrigins("https://localhost:7296")
+    //              .AllowAnyHeader()
+    //              .AllowAnyMethod();
+    //    });
+
+    options.AddPolicy(name: allowedOrigins, policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+
 });
+
+
+
 
 var app = builder.Build();
 
