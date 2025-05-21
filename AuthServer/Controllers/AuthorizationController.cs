@@ -11,13 +11,8 @@ using Microsoft.AspNetCore.Identity;
 
 namespace AuthServer.Controllers
 {
-    public class AuthorizationController : Controller
+    public class AuthorizationController(IOpenIddictApplicationManager applicationManager) : Controller
     {
-        private readonly IOpenIddictApplicationManager _applicationManager;
-
-        public AuthorizationController(IOpenIddictApplicationManager applicationManager)
-            => _applicationManager = applicationManager;
-
         [HttpPost("~/connect/token"), Produces("application/json")]
         public async Task<IActionResult> Exchange()
         {
@@ -25,22 +20,13 @@ namespace AuthServer.Controllers
 
             // Håndter client_credentials flow
             if (request.IsClientCredentialsGrantType())
-            {
-                var application = await _applicationManager.FindByClientIdAsync(request.ClientId)
-                    ?? throw new InvalidOperationException("The application cannot be found.");
+            {    
+                var identity = new ClaimsIdentity(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
 
-                var identity = new ClaimsIdentity(TokenValidationParameters.DefaultAuthenticationType, Claims.Name, Claims.Role);
+                // Krævet claim: Subject (sub)
+                identity.AddClaim(Claims.Subject, request.ClientId!,Destinations.AccessToken);
 
-                identity.SetClaim(Claims.Subject, await _applicationManager.GetClientIdAsync(application));
-                identity.SetClaim(Claims.Name, await _applicationManager.GetDisplayNameAsync(application));
-
-                identity.SetDestinations(static claim => claim.Type switch
-                {
-                    Claims.Name when claim.Subject.HasScope(Scopes.Profile)
-                        => [Destinations.AccessToken, Destinations.IdentityToken],
-                    _ => [Destinations.AccessToken]
-                });
-
+                // Opret principal
                 var principal = new ClaimsPrincipal(identity);
                 principal.SetResources("resource_server");
                 principal.SetScopes(request.GetScopes());
@@ -54,8 +40,6 @@ namespace AuthServer.Controllers
                 var principal = (await HttpContext.AuthenticateAsync(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme)).Principal
                     ?? throw new InvalidOperationException("Brugerens principal kunne ikke hentes.");
                 principal.SetResources("resource_server");
-                //principal.SetScopes(request.GetScopes());
-
 
                 return SignIn(principal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
             }
