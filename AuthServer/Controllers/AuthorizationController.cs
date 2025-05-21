@@ -42,6 +42,7 @@ namespace AuthServer.Controllers
                 });
 
                 var principal = new ClaimsPrincipal(identity);
+                principal.SetResources("resource_server");
                 principal.SetScopes(request.GetScopes());
 
                 return SignIn(principal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
