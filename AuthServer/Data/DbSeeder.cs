@@ -53,6 +53,7 @@ namespace AuthServer.Data
                     {
                         Permissions.Endpoints.Authorization,
                         Permissions.Endpoints.Token,
+                        Permissions.Endpoints.EndSession,
                         Permissions.GrantTypes.AuthorizationCode,
                         Permissions.ResponseTypes.Code,
                         Permissions.Prefixes.Scope + Scopes.OpenId,

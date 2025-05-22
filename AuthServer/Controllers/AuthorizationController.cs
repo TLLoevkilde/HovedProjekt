@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace AuthServer.Controllers
 {
-    public class AuthorizationController(IOpenIddictApplicationManager applicationManager) : Controller
+    public class AuthorizationController(IOpenIddictApplicationManager applicationManager, SignInManager<IdentityUser> signInManager) : Controller
     {
         [HttpPost("~/connect/token"), Produces("application/json")]
         public async Task<IActionResult> Exchange()
@@ -92,6 +92,36 @@ namespace AuthServer.Controllers
             return SignIn(principal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
         }
 
+
+        [HttpGet("~/connect/logout")]
+        public async Task<IActionResult> Logout()
+        {
+            // Hvis ikke logget ind, giv dem alligevel en redirect hjem
+            if (User?.Identity is { IsAuthenticated: false })
+            {
+                return SignOut(
+                    new AuthenticationProperties { RedirectUri = "/" },
+                    IdentityConstants.ApplicationScheme);
+            }
+
+            // Log ud af ASP.NET Identity (cookie)
+            await signInManager.SignOutAsync();
+
+            // Hent OIDC‐logout‐requesten
+            var request = HttpContext.GetOpenIddictServerRequest();
+            if (request is null)
+            {
+                return BadRequest("Invalid logout request.");
+            }
+
+            // SignOut fire Identity‐cookie og OIDC (fjern session), derefter redirect til klient
+            return SignOut(
+                new AuthenticationProperties
+                {
+                    RedirectUri = request.PostLogoutRedirectUri ?? "/"
+                },
+                IdentityConstants.ApplicationScheme);
+        }
 
     }
 }

@@ -23,6 +23,8 @@
     </PackageReference>
     <PackageReference Include="OpenIddict.AspNetCore" Version="6.3.0" />
     <PackageReference Include="OpenIddict.EntityFrameworkCore" Version="6.3.0" />
+    <PackageReference Include="OpenIddict.Server.AspNetCore" Version="6.3.0" />
+    <PackageReference Include="OpenIddict.Server" Version="6.3.0" />
   </ItemGroup>
 
 </Project>

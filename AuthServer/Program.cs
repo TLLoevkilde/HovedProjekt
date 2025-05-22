@@ -3,7 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using AuthServer.Data;
 using Microsoft.IdentityModel.Tokens;
 using OpenIddict.Abstractions;
-using Microsoft.Extensions.Options;
+using OpenIddict.Server.AspNetCore;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,7 +26,10 @@ builder.Services.AddOpenIddict()
     .AddServer(options =>
     {
         options.SetAuthorizationEndpointUris("/connect/authorize")
+                .SetEndSessionEndpointUris("/connect/logout")
+               //.SetLogoutEndpointUris("/connect/logout")
                .SetTokenEndpointUris("/connect/token");
+
 
         options.AllowAuthorizationCodeFlow()
                .RequireProofKeyForCodeExchange();
@@ -42,6 +47,8 @@ builder.Services.AddOpenIddict()
         options.UseAspNetCore()
                .EnableAuthorizationEndpointPassthrough()
                .EnableTokenEndpointPassthrough()
+               .EnableEndSessionEndpointPassthrough()
+               //.EnableLogoutEndpointPassthrough()
                .EnableStatusCodePagesIntegration()
                .EnableAuthorizationRequestCaching();
     });
