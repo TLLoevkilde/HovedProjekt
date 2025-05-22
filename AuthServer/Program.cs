@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using AuthServer.Data;
 using Microsoft.IdentityModel.Tokens;
 using OpenIddict.Abstractions;
-using OpenIddict.Server.AspNetCore;
+
 
 
 
@@ -27,7 +27,6 @@ builder.Services.AddOpenIddict()
     {
         options.SetAuthorizationEndpointUris("/connect/authorize")
                 .SetEndSessionEndpointUris("/connect/logout")
-               //.SetLogoutEndpointUris("/connect/logout")
                .SetTokenEndpointUris("/connect/token");
 
 
@@ -35,10 +34,14 @@ builder.Services.AddOpenIddict()
                .RequireProofKeyForCodeExchange();
 
         options.AllowClientCredentialsFlow();
+        options.AllowRefreshTokenFlow();
 
         options.RegisterScopes(OpenIddictConstants.Scopes.OpenId,
-                               OpenIddictConstants.Scopes.Profile,
-                               OpenIddictConstants.Scopes.Email);
+                               OpenIddictConstants.Scopes.OfflineAccess);
+
+        options.SetAccessTokenLifetime(TimeSpan.FromMinutes(2));
+        options.SetIdentityTokenLifetime(TimeSpan.FromMinutes(2));
+        options.SetRefreshTokenLifetime(TimeSpan.FromMinutes(5));
 
         options.AddEncryptionKey(new SymmetricSecurityKey(
             Convert.FromBase64String("DRjd/GnduI3Efzen9V9BvbNUfc/VKgXltV7Kbk9sMkY=")));
@@ -48,7 +51,6 @@ builder.Services.AddOpenIddict()
                .EnableAuthorizationEndpointPassthrough()
                .EnableTokenEndpointPassthrough()
                .EnableEndSessionEndpointPassthrough()
-               //.EnableLogoutEndpointPassthrough()
                .EnableStatusCodePagesIntegration()
                .EnableAuthorizationRequestCaching();
     });

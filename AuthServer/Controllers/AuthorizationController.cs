@@ -44,6 +44,17 @@ namespace AuthServer.Controllers
                 return SignIn(principal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
             }
 
+            // Hånter refresh flow
+            else if (request.IsRefreshTokenGrantType())
+            {
+                var principal = (await HttpContext.AuthenticateAsync(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme)).Principal
+                    ?? throw new InvalidOperationException("Refresh token principal kunne ikke hentes.");
+
+                principal.SetResources("resource_server");
+
+                return SignIn(principal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+            }
+
             throw new NotImplementedException("The specified grant is not implemented.");
         }
 

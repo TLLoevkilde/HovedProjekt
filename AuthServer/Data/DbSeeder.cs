@@ -46,7 +46,7 @@ namespace AuthServer.Data
                     DisplayName = "SPA Client",
                     ClientType = ClientTypes.Public, // ingen client_secret
 
-                    RedirectUris = { new Uri("https://localhost:7296/callback") },
+                    RedirectUris = { new Uri("https://localhost:7296/callback"), new Uri("https://localhost:7296/silent-renew") },
                     PostLogoutRedirectUris = { new Uri("https://localhost:7296/") },
 
                     Permissions =
@@ -55,10 +55,10 @@ namespace AuthServer.Data
                         Permissions.Endpoints.Token,
                         Permissions.Endpoints.EndSession,
                         Permissions.GrantTypes.AuthorizationCode,
+                        Permissions.GrantTypes.RefreshToken,
                         Permissions.ResponseTypes.Code,
                         Permissions.Prefixes.Scope + Scopes.OpenId,
-                        Permissions.Prefixes.Scope + Scopes.Profile,
-                        Permissions.Prefixes.Scope + Scopes.Email,
+                        Permissions.Prefixes.Scope + Scopes.OfflineAccess,
                         Permissions.Prefixes.Scope + "note_api"
                     },
 
