@@ -41,7 +41,7 @@ builder.Services.AddOpenIddict()
 
         options.SetAccessTokenLifetime(TimeSpan.FromMinutes(2));
         options.SetIdentityTokenLifetime(TimeSpan.FromMinutes(2));
-        options.SetRefreshTokenLifetime(TimeSpan.FromMinutes(5));
+        options.SetRefreshTokenLifetime(TimeSpan.FromMinutes(3));
 
         options.AddEncryptionKey(new SymmetricSecurityKey(
             Convert.FromBase64String("DRjd/GnduI3Efzen9V9BvbNUfc/VKgXltV7Kbk9sMkY=")));

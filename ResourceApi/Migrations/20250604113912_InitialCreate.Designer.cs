@@ -11,8 +11,8 @@ using ResourceApi.Data;
 namespace ResourceApi.Migrations
 {
     [DbContext(typeof(NotesDbContext))]
-    [Migration("20250519063616_Init")]
-    partial class Init
+    [Migration("20250604113912_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,6 +33,10 @@ namespace ResourceApi.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
