@@ -75,13 +75,6 @@ var allowedOrigins = "allowedOrigins";
 
 builder.Services.AddCors(options =>
 {
-    //options.AddPolicy(name: allowedOrigins,
-    //    policy =>
-    //    {
-    //        policy.WithOrigins("https://localhost:7296")
-    //              .AllowAnyHeader()
-    //              .AllowAnyMethod();
-    //    });
 
     options.AddPolicy(name: allowedOrigins, policy =>
     {
@@ -91,8 +84,6 @@ builder.Services.AddCors(options =>
     });
 
 });
-
-
 
 
 var app = builder.Build();

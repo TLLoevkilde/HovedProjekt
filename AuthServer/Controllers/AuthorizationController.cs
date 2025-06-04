@@ -23,7 +23,6 @@ namespace AuthServer.Controllers
             {    
                 var identity = new ClaimsIdentity(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
 
-                // Krævet claim: Subject (sub)
                 identity.AddClaim(Claims.Subject, request.ClientId!,Destinations.AccessToken);
 
                 // Opret principal
@@ -107,7 +106,7 @@ namespace AuthServer.Controllers
         [HttpGet("~/connect/logout")]
         public async Task<IActionResult> Logout()
         {
-            // Hvis ikke logget ind, giv dem alligevel en redirect hjem
+            // Hvis ikke logget ind, redirect hjem
             if (User?.Identity is { IsAuthenticated: false })
             {
                 return SignOut(
@@ -115,7 +114,7 @@ namespace AuthServer.Controllers
                     IdentityConstants.ApplicationScheme);
             }
 
-            // Log ud af ASP.NET Identity (cookie)
+            // Log ud af ASP.NET Identity
             await signInManager.SignOutAsync();
 
             // Hent OIDC‐logout‐requesten
