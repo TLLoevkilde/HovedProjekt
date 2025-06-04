@@ -3,11 +3,10 @@ using OpenIddict.Client;
 using System.Net.Http.Headers;
 using static OpenIddict.Client.OpenIddictClientModels;
 
-// 1. Opret service-samling
 var services = new ServiceCollection();
 
-// 2. Registrer HttpClient og OpenIddict-klienten
-services.AddHttpClient(); // Til at kalde API senere
+
+services.AddHttpClient(); 
 
 services.AddOpenIddict()
     .AddClient(options =>
@@ -24,14 +23,13 @@ services.AddOpenIddict()
         });
     });
 
-// 3. Build service provider
+
 using var serviceProvider = services.BuildServiceProvider();
 
-// 4. Opret scope og hent OpenIddictClientService
+
 using var scope = serviceProvider.CreateScope();
 var service = scope.ServiceProvider.GetRequiredService<OpenIddictClientService>();
 
-// 5. Hent access token via client credentials
 var result = await service.AuthenticateWithClientCredentialsAsync(new ClientCredentialsAuthenticationRequest
 {
     Scopes = new List<string> { "message_api" }
@@ -40,7 +38,7 @@ var result = await service.AuthenticateWithClientCredentialsAsync(new ClientCred
 Console.WriteLine($"Access token:\n {result.AccessToken}");
 
 Console.WriteLine("\nRequesting message from ResourceApi");
-// 6. Brug token til at kalde en beskyttet API
+
 var httpClient = scope.ServiceProvider.GetRequiredService<IHttpClientFactory>().CreateClient();
 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", result.AccessToken);
 
