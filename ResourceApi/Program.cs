@@ -8,29 +8,25 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<NotesDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Add OpenIddict validation services
+
 builder.Services.AddOpenIddict()
     .AddValidation(options =>
     {
         // URL'en til AuthServer
         options.SetIssuer("https://localhost:7143/");
 
-        // Delte krypteringsnøgle
         options.AddEncryptionKey(new SymmetricSecurityKey(
             Convert.FromBase64String("DRjd/GnduI3Efzen9V9BvbNUfc/VKgXltV7Kbk9sMkY=")));
 
-        // Brug HttpClient til discovery
         options.UseSystemNetHttp();
 
-        // ResourceAPI repræsenterer denne resource (audience)
         options.AddAudiences("resource_server");
 
-        // Register the ASP.NET Core host.
         options.UseAspNetCore();
 
     });
 
-// Hvis du vil bruge [Authorize] attributten globalt (valgfrit)
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme;
@@ -55,24 +51,8 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 app.UseCors();
-// (valgfri) Log Authorization-header
-app.Use(async (context, next) =>
-{
-    Console.WriteLine($"Authorization: {context.Request.Headers["Authorization"]}");
-    await next();
-});
 
 app.UseAuthentication();
-app.Use(async (context, next) =>
-{
-    Console.WriteLine($"IsAuthenticated: {context.User.Identity?.IsAuthenticated}");
-    foreach (var claim in context.User.Claims)
-    {
-        Console.WriteLine($"  {claim.Type}: {claim.Value}");
-    }
-    await next();
-});
-
 app.UseAuthorization();
 
 app.MapControllers();

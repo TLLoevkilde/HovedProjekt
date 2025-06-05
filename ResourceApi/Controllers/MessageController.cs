@@ -13,7 +13,6 @@ namespace ResourceApi.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            // Tjek om token har det nødvendige scope
             if (!User.HasScope("message_api"))
             {
                 return Forbid(authenticationSchemes: OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme,
@@ -34,7 +33,6 @@ namespace ResourceApi.Controllers
                 return Unauthorized("Access token does not contain the required subject claim.");
             }
 
-            // Returner en simpel besked baseret på token info
             return Ok($"User '{userId}' has been successfully authenticated. \nHello from the Resource API! ");
         }
     }
