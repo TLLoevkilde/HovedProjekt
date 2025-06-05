@@ -37,6 +37,17 @@ namespace AuthServer.Data
                 });
             }
 
+            // Opret scopet 'message_api' hvis det ikke findes
+            if (await scopeManager.FindByNameAsync("message_api") is null)
+            {
+                await scopeManager.CreateAsync(new OpenIddictScopeDescriptor
+                {
+                    Name = "message_api",
+                    DisplayName = "Adgang til Message API",
+                    Resources = { "resource_server" } 
+                });
+            }
+
             // Opret clienten 'spa-client' hvis den ikke findes
             if (await appManager.FindByClientIdAsync("spa-client") is null)
             {
@@ -66,18 +77,6 @@ namespace AuthServer.Data
                     {
                         Requirements.Features.ProofKeyForCodeExchange // PKCE er påkrævet
                     }
-                });
-            }
-
-
-            // Opret scopet 'message_api' hvis det ikke findes
-            if (await scopeManager.FindByNameAsync("message_api") is null)
-            {
-                await scopeManager.CreateAsync(new OpenIddictScopeDescriptor
-                {
-                    Name = "message_api",
-                    DisplayName = "Adgang til Message API",
-                    Resources = { "resource_server" } // Resource Server-navnet skal matche audience
                 });
             }
 
