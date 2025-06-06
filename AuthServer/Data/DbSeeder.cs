@@ -55,9 +55,8 @@ namespace AuthServer.Data
                 {
                     ClientId = "spa-client",
                     DisplayName = "SPA Client",
-                    ClientType = ClientTypes.Public, // ingen client_secret
-
-                    RedirectUris = { new Uri("https://localhost:7296/callback"), new Uri("https://localhost:7296/silent-renew") },
+                    ClientType = ClientTypes.Public, 
+                    RedirectUris = { new Uri("https://localhost:7296/callback") },
                     PostLogoutRedirectUris = { new Uri("https://localhost:7296/") },
 
                     Permissions =
@@ -75,7 +74,7 @@ namespace AuthServer.Data
 
                     Requirements =
                     {
-                        Requirements.Features.ProofKeyForCodeExchange // PKCE er påkrævet
+                        Requirements.Features.ProofKeyForCodeExchange
                     }
                 });
             }
@@ -87,7 +86,7 @@ namespace AuthServer.Data
                 {
                     Name = "note_api",
                     DisplayName = "Adgang til Note API",
-                    Resources = { "resource_server" } // Husk: dette skal matche audience i din Resource API
+                    Resources = { "resource_server" }
                 });
             }
 
