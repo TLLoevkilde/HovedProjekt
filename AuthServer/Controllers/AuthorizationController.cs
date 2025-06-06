@@ -77,27 +77,13 @@ namespace AuthServer.Controllers
                     });
             }
 
-            var identity = new ClaimsIdentity(
-                TokenValidationParameters.DefaultAuthenticationType,
-                Claims.Name, Claims.Role);
-
-            var subject = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                          ?? throw new InvalidOperationException("UserId claim mangler.");
-
-            identity.SetClaim(Claims.Subject, subject);
-            identity.SetClaim(Claims.Name, User.Identity?.Name ?? "Unknown");
+            var identity = new ClaimsIdentity(TokenValidationParameters.DefaultAuthenticationType);
+ 
+            identity.AddClaim(Claims.Subject, User.FindFirst(ClaimTypes.NameIdentifier).Value, Destinations.AccessToken);
 
             var principal = new ClaimsPrincipal(identity);
             principal.SetScopes(request.GetScopes());
-
-            principal.SetDestinations(claim =>
-            {
-                return claim.Type switch
-                {
-                    Claims.Subject or Claims.Name => [Destinations.AccessToken, Destinations.IdentityToken],
-                    _ => [Destinations.AccessToken]
-                };
-            });
+            principal.SetResources("resource_server");
 
             return SignIn(principal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
         }
@@ -124,7 +110,6 @@ namespace AuthServer.Controllers
                 return BadRequest("Invalid logout request.");
             }
 
-            // SignOut fire Identity‐cookie og OIDC (fjern session), derefter redirect til klient
             return SignOut(
                 new AuthenticationProperties
                 {

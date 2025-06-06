@@ -25,7 +25,7 @@ const addNoteBtn = document.getElementById("addNoteBtn");
 const noteInput = document.getElementById("noteInput");
 const noteList = document.getElementById("noteList");
 
-// Bind knapper
+// Knapper
 loginBtn.onclick = () => userManager.signinRedirect();
 logoutBtn.onclick = () => userManager.signoutRedirect();
 addNoteBtn.onclick = addNote;
